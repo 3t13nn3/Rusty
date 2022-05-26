@@ -1,7 +1,7 @@
 //! The simplest possible example that does something.
 #![allow(clippy::unnecessary_wraps)]
 
-mod background;
+mod main_state;
 
 use ggez::conf::WindowMode;
 use ggez::event;
@@ -29,12 +29,13 @@ pub fn main() -> GameResult {
         .window_mode(WindowMode {
             width: WIDTH,
             height: HEIGHT,
+            resizable: false,
             ..Default::default()
         });
     let (mut ctx, event_loop) = cb.build()?;
     graphics::set_window_title(&ctx, "Etienne on Rust");
 
     //Adding background thing
-    let state = background::Backgrounds::new(&mut ctx)?;
+    let state = main_state::MainState::new(&mut ctx)?;
     event::run(ctx, event_loop, state)
 }
