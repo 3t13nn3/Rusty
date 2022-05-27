@@ -4,6 +4,9 @@ use glam::*;
 
 use std::fs;
 
+const WIDTH: f32 = super::super::WIDTH;
+const HEIGHT: f32 = super::super::HEIGHT;
+
 pub struct Backgrounds {
     pos_x: Vec<f32>,
     layers: Vec<graphics::Image>,
@@ -12,7 +15,7 @@ pub struct Backgrounds {
 }
 
 impl Backgrounds {
-    pub fn new(ctx: &mut Context, height: f32) -> Backgrounds {
+    pub fn new(ctx: &mut Context) -> Backgrounds {
         //recover images
         let mut l: Vec<graphics::Image> = Vec::new();
         // Calculating scale
@@ -37,7 +40,7 @@ impl Backgrounds {
             l.push(e);
 
             // Filling scale factor on the fly
-            scales.push(height / l.last().unwrap().height() as f32);
+            scales.push(HEIGHT / l.last().unwrap().height() as f32);
         }
 
         // Init x positions
@@ -69,16 +72,18 @@ impl Backgrounds {
             &self.layers
         }
     */
-    pub fn update(&mut self, _ctx: &Context, velocity: f32) {
+    pub fn update(&mut self, _ctx: &Context, velocity: f32, car_position: Vec2, car_size: f32) {
         self.velocity = velocity / 8.;
 
-        for (i, p) in self.pos_x.iter_mut().enumerate() {
-            *p -= (1. + i as f32) * self.velocity;
-            if *p <= -self.scaled_factor[i] * self.layers[i].width() as f32 {
-                *p += self.scaled_factor[i] * self.layers[i].width() as f32;
-            }
-            if *p >= 0. {
-                *p -= self.scaled_factor[i] * self.layers[i].width() as f32;
+        if car_position[0] <= car_size || car_position[0] >= WIDTH / 2. {
+            for (i, p) in self.pos_x.iter_mut().enumerate() {
+                *p -= (1. + i as f32) * self.velocity;
+                if *p <= -self.scaled_factor[i] * self.layers[i].width() as f32 {
+                    *p += self.scaled_factor[i] * self.layers[i].width() as f32;
+                }
+                if *p >= 0. {
+                    *p -= self.scaled_factor[i] * self.layers[i].width() as f32;
+                }
             }
         }
     }
